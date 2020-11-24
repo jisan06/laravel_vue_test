@@ -15,6 +15,13 @@ class CreatePassengersTable extends Migration
     {
         Schema::create('passengers', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('service_id')->index();
+            $table->string('name',255);
+            $table->string('passport',255);
+            $table->string('email',255);
+            $table->string('mobile',255);
+            
+            $table->foreign('service_id')->references('id')->on('services');
             $table->timestamps();
         });
     }

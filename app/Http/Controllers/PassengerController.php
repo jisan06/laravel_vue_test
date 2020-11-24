@@ -16,7 +16,9 @@ class PassengerController extends Controller
      */
     public function index()
     {
-        //
+        $passenger = \App\Passenger::paginate(10);
+
+        return $passenger->toJson();
     }
 
     /**
@@ -36,8 +38,27 @@ class PassengerController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        //
+    {   
+       $passenger = Passenger::create( [
+            'service_id' => $request->service_id,          
+            'name' => $request->passenger['name'],          
+            'passport' => $request->passenger['passport'],      
+            'email' => $request->passenger['email'],      
+            'mobile' => $request->passenger['mobile'],      
+        ]);
+
+
+       /*if($passenger){
+            $service_data_list = count($request->service_data);
+            for ($i= 1; $i < $service_data_list ; $i++) {
+                $service_data = ServiceData::create( [
+                    'service_id' => $passenger->id,                
+                    'title' => $request->service_data[$i]['service_data_title'],               
+                ]);
+            }
+        }*/
+
+        return 1;
     }
 
     /**
@@ -80,14 +101,34 @@ class PassengerController extends Controller
      * @param  \App\Passenger  $passenger
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Passenger $passenger)
+    public function destroy($id)
     {
-        //
+        $passenger = \App\Passenger::find($id);
+        if(!empty($passenger)){
+            $passenger->delete();
+            $msg = [
+                'success' => true,
+                'message' => 'Passenger deleted successfully!'
+            ];
+            return response()->json($msg);
+        } else {
+            $msg = [
+                'success' => false,
+                'message' => 'Passenger deleted failed!'
+            ];
+            return response()->json($msg);
+        }
     }
 
     public function getServices(){
-        $services = \App\Service::all();
+        $services = Service::all();
 
         return $services->toJson();
+    }
+
+    public function getServicesInfo(){
+        $services_info = ServiceData::where('service_id',request()->service_id)->get();
+
+        return $services_info->toJson();
     }
 }

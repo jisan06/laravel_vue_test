@@ -3,9 +3,9 @@
         <div class='row justify-content-center'>
             <div class='col-md-8'>
             <div class='card'>
-                <div class='card-header'>All Passenger</div>
+                <div class='card-header'>All Services</div>
                 <div class='card-body'>
-                    <router-link :to="{ name: 'create-passenger' }" class="btn btn-primary">Create New Passenger</router-link>
+                    <router-link :to="{ name: 'create-passenger' }" class="btn btn-primary">Create New Services</router-link>
                     <br/>
                     <br/>
                     <div class="table-responsive">
@@ -18,19 +18,19 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="(service, index) in services.data" :key="service.id">
+                                <tr v-for="(passenger, index) in passengers.data" :key="passenger.id">
                                     <td width="50" class="text-center">{{ index + 1 }}</td>
-                                    <td>{{ service.name }}</td>
+                                    <td>{{ passenger.name }}</td>
                                     <td width="200" class="text-center">
                                         <div class="btn-group">
-                                            <button class="btn btn-danger" @click = "deletePost(service.id)">Delete</button>
+                                            <button class="btn btn-danger" @click = "deletePost(passenger.id)">Delete</button>
                                         </div>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-                    <pagination :data="services" @pagination-change-page="getResults"></pagination>
+                    <pagination :data="passengers" @pagination-change-page="getResults"></pagination>
                 </div>
             </div>
             </div>
@@ -42,7 +42,7 @@
 export default {
     data() {
         return {
-          services: {}
+          passengers: {}
         }
     },
     created() {
@@ -51,11 +51,11 @@ export default {
     methods: {
         getResults(page){
 
-            let uri = 'api/services?page=' + page;
+            let uri = 'api/passengers?page=' + page;
             this.axios.get(uri).then(response => {
                         return response.data;
                     }).then(data => {
-                        this.services = data;
+                        this.passengers = data;
                     });
         },
         deletePost(id)
@@ -73,11 +73,11 @@ export default {
                 if (result.value) {
                     this.$swal.fire({
                         title: 'Success!',
-                        text: 'Service deleted successfully',
+                        text: 'Passenger deleted successfully',
                         icon: 'success',
                         timer: 1000
                     });
-                    let uri = `api/service/delete/${id}`;
+                    let uri = `api/passenger/delete/${id}`;
                     this.axios.delete(uri).then(response => {
                         this.getResults();
                     });

@@ -44,45 +44,7 @@ const routes = [
       path: '/passenger/create',
       component: PassengerCreate
   },
-  /*{
-      name: 'edit',
-      path: '/article/edit/:id',
-      component: ArticleEdit
-  },
-  {
-    name: 'show',
-    path: '/article/show/:id',
-    component: ArticleShow
-}*/
 ];
-
-/*import ArticleIndex from './components/ArticleIndex.vue';
-import ArticleCreate from './components/ArticleCreate.vue';
-import ArticleShow from './components/ArticleShow.vue';
-import ArticleEdit from './components/ArticleEdit.vue';
-
-const routes = [
-  {
-      name: 'home',
-      path: '/',
-      component: ArticleIndex
-  },
-  {
-      name: 'create',
-      path: '/article/create',
-      component: ArticleCreate
-  },
-  {
-      name: 'edit',
-      path: '/article/edit/:id',
-      component: ArticleEdit
-  },
-  {
-    name: 'show',
-    path: '/article/show/:id',
-    component: ArticleShow
-}
-];*/
 
 const router = new VueRouter({ mode: 'history', routes: routes});
 const app = new Vue(Vue.util.extend({ router }, App)).$mount('#app');

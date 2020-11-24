@@ -17,4 +17,8 @@ class Service extends Model
     public function serviceData() {
         return $this->hasMany('App\ServiceData','service_id');
     }
+
+    public function passenger() {
+        return $this->belongsTo('App\Passenger','service_id');
+    }
 }

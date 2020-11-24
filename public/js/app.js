@@ -1989,6 +1989,25 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -1996,7 +2015,9 @@ __webpack_require__.r(__webpack_exports__);
       services: null,
       errors: [],
       name: null,
-      service_data_list: [{}]
+      service_id: null,
+      service_name: null,
+      services_data_list: null
     };
   },
   created: function created() {
@@ -2009,42 +2030,39 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     GetServiceInfo: function GetServiceInfo(e) {
-      alert(e.target.value);
-    },
-    createService: function createService(e) {
       var _this2 = this;
 
-      if (this.$data.passenger.name != null && this.$data.service_data_list.length > 1) {
-        var uri = '/api/passenger/store';
-        var payload = {
-          name: this.passenger.name,
-          service_data: this.service_data_list
-        };
-        this.axios.post(uri, payload).then(function (response) {
-          _this2.$swal.fire({
-            title: 'Success',
-            text: "Service created successfully",
-            icon: 'success',
-            timer: 1000
-          });
+      this.service_id = e.target.value;
+      this.service_name = e.target.innerHTML;
+      var payload = {
+        service_id: this.service_id
+      };
+      var url = "/api/passenger/get-services-info";
+      this.axios.post(url, payload).then(function (response) {
+        _this2.services_data_list = response.data;
+      });
+    },
+    createPassenger: function createPassenger(e) {
+      var _this3 = this;
 
-          _this2.$router.push({
-            name: 'home'
-          });
+      var uri = '/api/passenger/store';
+      var payload = {
+        passenger: this.passenger,
+        service_id: this.service_id
+      };
+      this.axios.post(uri, payload).then(function (response) {
+        /* this.$swal.fire({
+             title: 'Success',
+             text: "Service created successfully",
+             icon: 'success',
+             timer: 1000
+         })*/
+        _this3.$router.push({
+          name: 'passengers'
         });
-        return true;
-      }
-
+      });
+      return true;
       this.errors = [];
-
-      if (!this.passenger.name) {
-        this.errors.push('Please fill up the name filed !');
-      }
-
-      if (this.service_data_list.length == 1) {
-        this.errors.push('Please fill up the passenger data filed !');
-      }
-
       e.preventDefault();
     }
   }
@@ -2104,7 +2122,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      services: {}
+      passengers: {}
     };
   },
   created: function created() {
@@ -2114,11 +2132,11 @@ __webpack_require__.r(__webpack_exports__);
     getResults: function getResults(page) {
       var _this = this;
 
-      var uri = 'api/services?page=' + page;
+      var uri = 'api/passengers?page=' + page;
       this.axios.get(uri).then(function (response) {
         return response.data;
       }).then(function (data) {
-        _this.services = data;
+        _this.passengers = data;
       });
     },
     deletePost: function deletePost(id) {
@@ -2137,12 +2155,12 @@ __webpack_require__.r(__webpack_exports__);
         if (result.value) {
           _this2.$swal.fire({
             title: 'Success!',
-            text: 'Service deleted successfully',
+            text: 'Passenger deleted successfully',
             icon: 'success',
             timer: 1000
           });
 
-          var uri = "api/service/delete/".concat(id);
+          var uri = "api/passenger/delete/".concat(id);
 
           _this2.axios["delete"](uri).then(function (response) {
             _this2.getResults();
@@ -42564,7 +42582,7 @@ var render = function() {
                 on: {
                   submit: function($event) {
                     $event.preventDefault()
-                    return _vm.createService($event)
+                    return _vm.createPassenger($event)
                   }
                 }
               },
@@ -42715,7 +42733,7 @@ var render = function() {
                       "div",
                       { staticClass: "form-group" },
                       [
-                        _c("label", { attrs: { htmlFor: "mobile" } }, [
+                        _c("label", { attrs: { htmlFor: "services" } }, [
                           _vm._v("Service")
                         ]),
                         _vm._v(" "),
@@ -42751,6 +42769,110 @@ var render = function() {
                       ],
                       2
                     )
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "row" }, [
+                  _c("div", { staticClass: "col-md-12" }, [
+                    _vm.services_data_list
+                      ? _c(
+                          "div",
+                          {
+                            staticStyle: {
+                              border: "1px solid rgb(146 144 144)",
+                              padding: "20px",
+                              "margin-bottom": "40px"
+                            }
+                          },
+                          [
+                            _c("h5", [
+                              _vm._v(
+                                "Service Information for " +
+                                  _vm._s(_vm.service_name)
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("hr"),
+                            _vm._v(" "),
+                            _vm._l(_vm.services_data_list, function(
+                              service_data,
+                              index
+                            ) {
+                              return _c(
+                                "div",
+                                { key: service_data.id, staticClass: "row" },
+                                [
+                                  _c("div", { staticClass: "col-md-12" }, [
+                                    _c("div", { staticClass: "form-group" }, [
+                                      _c(
+                                        "label",
+                                        { attrs: { htmlFor: "service_data" } },
+                                        [_vm._v(_vm._s(service_data.title))]
+                                      ),
+                                      _vm._v(" "),
+                                      _c("input", {
+                                        directives: [
+                                          {
+                                            name: "model",
+                                            rawName: "v-model",
+                                            value: service_data.id,
+                                            expression: "service_data.id"
+                                          }
+                                        ],
+                                        attrs: { type: "hidden" },
+                                        domProps: { value: service_data.id },
+                                        on: {
+                                          input: function($event) {
+                                            if ($event.target.composing) {
+                                              return
+                                            }
+                                            _vm.$set(
+                                              service_data,
+                                              "id",
+                                              $event.target.value
+                                            )
+                                          }
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("input", {
+                                        directives: [
+                                          {
+                                            name: "model",
+                                            rawName: "v-model",
+                                            value: service_data.value,
+                                            expression: "service_data.value"
+                                          }
+                                        ],
+                                        key: index,
+                                        staticClass: "form-control",
+                                        attrs: {
+                                          type: "text",
+                                          id: "service_data"
+                                        },
+                                        domProps: { value: service_data.value },
+                                        on: {
+                                          input: function($event) {
+                                            if ($event.target.composing) {
+                                              return
+                                            }
+                                            _vm.$set(
+                                              service_data,
+                                              "value",
+                                              $event.target.value
+                                            )
+                                          }
+                                        }
+                                      })
+                                    ])
+                                  ])
+                                ]
+                              )
+                            })
+                          ],
+                          2
+                        )
+                      : _vm._e()
                   ])
                 ]),
                 _vm._v(" "),
@@ -42816,7 +42938,7 @@ var render = function() {
     _c("div", { staticClass: "row justify-content-center" }, [
       _c("div", { staticClass: "col-md-8" }, [
         _c("div", { staticClass: "card" }, [
-          _c("div", { staticClass: "card-header" }, [_vm._v("All Passenger")]),
+          _c("div", { staticClass: "card-header" }, [_vm._v("All Services")]),
           _vm._v(" "),
           _c(
             "div",
@@ -42828,7 +42950,7 @@ var render = function() {
                   staticClass: "btn btn-primary",
                   attrs: { to: { name: "create-passenger" } }
                 },
-                [_vm._v("Create New Passenger")]
+                [_vm._v("Create New Services")]
               ),
               _vm._v(" "),
               _c("br"),
@@ -42844,8 +42966,8 @@ var render = function() {
                     _vm._v(" "),
                     _c(
                       "tbody",
-                      _vm._l(_vm.services.data, function(service, index) {
-                        return _c("tr", { key: service.id }, [
+                      _vm._l(_vm.passengers.data, function(passenger, index) {
+                        return _c("tr", { key: passenger.id }, [
                           _c(
                             "td",
                             {
@@ -42855,7 +42977,7 @@ var render = function() {
                             [_vm._v(_vm._s(index + 1))]
                           ),
                           _vm._v(" "),
-                          _c("td", [_vm._v(_vm._s(service.name))]),
+                          _c("td", [_vm._v(_vm._s(passenger.name))]),
                           _vm._v(" "),
                           _c(
                             "td",
@@ -42871,7 +42993,7 @@ var render = function() {
                                     staticClass: "btn btn-danger",
                                     on: {
                                       click: function($event) {
-                                        return _vm.deletePost(service.id)
+                                        return _vm.deletePost(passenger.id)
                                       }
                                     }
                                   },
@@ -42889,7 +43011,7 @@ var render = function() {
               ]),
               _vm._v(" "),
               _c("pagination", {
-                attrs: { data: _vm.services },
+                attrs: { data: _vm.passengers },
                 on: { "pagination-change-page": _vm.getResults }
               })
             ],
@@ -58512,46 +58634,7 @@ var routes = [{
   name: 'create-passenger',
   path: '/passenger/create',
   component: _components_Passenger_Create_vue__WEBPACK_IMPORTED_MODULE_9__["default"]
-}
-/*{
-    name: 'edit',
-    path: '/article/edit/:id',
-    component: ArticleEdit
-},
-{
-  name: 'show',
-  path: '/article/show/:id',
-  component: ArticleShow
-}*/
-];
-/*import ArticleIndex from './components/ArticleIndex.vue';
-import ArticleCreate from './components/ArticleCreate.vue';
-import ArticleShow from './components/ArticleShow.vue';
-import ArticleEdit from './components/ArticleEdit.vue';
-
-const routes = [
-  {
-      name: 'home',
-      path: '/',
-      component: ArticleIndex
-  },
-  {
-      name: 'create',
-      path: '/article/create',
-      component: ArticleCreate
-  },
-  {
-      name: 'edit',
-      path: '/article/edit/:id',
-      component: ArticleEdit
-  },
-  {
-    name: 'show',
-    path: '/article/show/:id',
-    component: ArticleShow
-}
-];*/
-
+}];
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
   mode: 'history',
   routes: routes

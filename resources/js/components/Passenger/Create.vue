@@ -11,7 +11,7 @@
                             </ul>
                         </div>
 
-                        <form @submit.prevent="createService">
+                        <form @submit.prevent="createPassenger">
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class='form-group'>
@@ -51,12 +51,31 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class='form-group'>
-                                        <label htmlFor='mobile'>Service</label>
+                                        <label htmlFor='services'>Service</label>
                                         <br>
                                         <div style="display: inline-block;margin-right: 5px" v-for="(service) in services" :key="service.id">
                                             <button v-on:click="GetServiceInfo($event)" class="btn btn-dark" :value="service.id">{{service.name}}</button>
                                         </div>
                                             
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div style="border: 1px solid rgb(146 144 144);padding: 20px;margin-bottom: 40px;;" v-if="services_data_list">
+
+                                        <h5>Service Information for {{service_name}}</h5>
+                                                <hr>
+                                        <div class="row" v-for="(service_data, index) in services_data_list" :key="service_data.id">
+                                            <div class="col-md-12">
+                                                <div class='form-group'>
+                                                    <label htmlFor='service_data'>{{service_data.title}}</label>
+                                                    <input type="hidden" v-model="service_data.id">
+                                                    <input type="text" class="form-control" id="service_data" v-model="service_data.value" :key="index">
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -87,8 +106,9 @@
                 services:null,
                 errors: [],
                 name: null,
-                service_data_list: [{
-                }]
+                service_id:null,
+                service_name:null,
+                services_data_list:null,
             }
         },
         created() {
@@ -99,38 +119,38 @@
         },
         methods: {
             GetServiceInfo: function(e) {
-                alert(e.target.value);
+                this.service_id = e.target.value;
+                this.service_name = e.target.innerHTML;
+                let payload = {
+                    service_id: this.service_id,
+                };
+
+                
+                let url = `/api/passenger/get-services-info`;
+                    this.axios.post(url,payload).then((response) => {
+                        this.services_data_list = response.data;
+                    });
               },
-            createService(e){
-                if (this.$data.passenger.name != null && this.$data.service_data_list.length > 1) {
+            createPassenger(e){
                     let uri = '/api/passenger/store';
                     let payload = {
-                        name:this.passenger.name,
-                        service_data:this.service_data_list,
+                        passenger:this.passenger,
+                        service_id:this.service_id
                     };
 
                     this.axios.post(uri, payload).then((response) => {
 
-                        this.$swal.fire({
+                       /* this.$swal.fire({
                             title: 'Success',
                             text: "Service created successfully",
                             icon: 'success',
                             timer: 1000
-                        })
-                        this.$router.push({name: 'home'});
+                        })*/
+                        this.$router.push({name: 'passengers'});
                     });
                     return true;
-                }
 
                 this.errors = [];
-
-                if (!this.passenger.name) {
-                    this.errors.push('Please fill up the name filed !');
-                }
-
-                if (this.service_data_list.length == 1) {
-                   this.errors.push('Please fill up the passenger data filed !');
-                }
 
                 e.preventDefault();
             }
