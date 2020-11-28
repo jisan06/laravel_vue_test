@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Passenger;
 use App\Service;
 use App\ServiceData;
+use App\PassengerServiceInformation;
 
 class PassengerController extends Controller
 {
@@ -38,7 +39,8 @@ class PassengerController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {   
+    {      
+
        $passenger = Passenger::create( [
             'service_id' => $request->service_id,          
             'name' => $request->passenger['name'],          
@@ -48,15 +50,16 @@ class PassengerController extends Controller
         ]);
 
 
-       /*if($passenger){
-            $service_data_list = count($request->service_data);
-            for ($i= 1; $i < $service_data_list ; $i++) {
-                $service_data = ServiceData::create( [
-                    'service_id' => $passenger->id,                
-                    'title' => $request->service_data[$i]['service_data_title'],               
+       if($passenger){
+            $services_data_list = count($request->services_data_list);
+            for ($i= 1; $i < $services_data_list ; $i++) {
+                $passenger_service_data = PassengerServiceInformation::create( [ 
+                    'passenger_id' => $passenger->id,                
+                    'service_data_id' => $request->services_data_list[$i]['service_data_title_id'],                
+                    'service_data_value' => $request->services_data_list[$i]['service_data_title_value'],               
                 ]);
             }
-        }*/
+        }
 
         return 1;
     }

@@ -11,7 +11,7 @@
                             </ul>
                         </div>
 
-                        <form @submit.prevent="createPassenger">
+                        <form>
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class='form-group'>
@@ -70,9 +70,9 @@
                                         <div class="row" v-for="(service_data, index) in services_data_list" :key="service_data.id">
                                             <div class="col-md-12">
                                                 <div class='form-group'>
-                                                    <label htmlFor='service_data'>{{service_data.title}}</label>
-                                                    <input type="hidden" v-model="service_data.id">
-                                                    <input type="text" class="form-control" id="service_data" v-model="service_data.value" :key="index">
+                                                    <label htmlFor='service_data'>{{service_data.service_data_title}}</label>
+                                                    <input type="hidden" v-model="service_data.service_data_title_id">
+                                                    <input type="text" class="form-control" id="service_data" v-model="service_data.service_data_title_value" :key="index">
                                                 </div>
                                             </div>
                                         </div>
@@ -86,7 +86,7 @@
                                 </div>
 
                                 <div class="col-md-6 text-right">
-                                    <button class='btn btn-primary'>Submit</button>
+                                    <button v-on:click="createPassenger" class='btn btn-primary'>Submit</button>
                                 </div>
                             </div>
 
@@ -108,7 +108,7 @@
                 name: null,
                 service_id:null,
                 service_name:null,
-                services_data_list:null,
+                services_data_list: [],
             }
         },
         created() {
@@ -119,40 +119,52 @@
         },
         methods: {
             GetServiceInfo: function(e) {
+                e.preventDefault();
+                this.services_data_list = [];
                 this.service_id = e.target.value;
                 this.service_name = e.target.innerHTML;
                 let payload = {
                     service_id: this.service_id,
                 };
 
-                
                 let url = `/api/passenger/get-services-info`;
                     this.axios.post(url,payload).then((response) => {
-                        this.services_data_list = response.data;
+                        for(var row of response.data) {
+                            this.services_data_list.push(
+                                { 
+                                    service_data_title: row.title,
+                                    service_data_title_id: row.id,
+                                    service_data_title_value: ''
+                                }
+                             );
+                        }
+                        
                     });
               },
             createPassenger(e){
-                    let uri = '/api/passenger/store';
-                    let payload = {
-                        passenger:this.passenger,
-                        service_id:this.service_id
-                    };
-
-                    this.axios.post(uri, payload).then((response) => {
-
-                       /* this.$swal.fire({
-                            title: 'Success',
-                            text: "Service created successfully",
-                            icon: 'success',
-                            timer: 1000
-                        })*/
-                        this.$router.push({name: 'passengers'});
-                    });
-                    return true;
-
-                this.errors = [];
-
                 e.preventDefault();
+                let uri = '/api/passenger/store';
+                let payload = {
+                    passenger:this.passenger,
+                    service_id:this.service_id,
+                    services_data_list: this.services_data_list,
+                };
+
+                
+
+                this.axios.post(uri, payload).then((response) => {
+
+                    this.$swal.fire({
+                        title: 'Success',
+                        text: "Service created successfully",
+                        icon: 'success',
+                        timer: 1000
+                    })
+                    this.$router.push({name: 'passengers'});
+                });
+                return true;
+
+            this.errors = [];
             }
         }
     }

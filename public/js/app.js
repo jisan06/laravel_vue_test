@@ -1908,6 +1908,12 @@ module.exports = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(n); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 //
 //
 //
@@ -2017,7 +2023,7 @@ __webpack_require__.r(__webpack_exports__);
       name: null,
       service_id: null,
       service_name: null,
-      services_data_list: null
+      services_data_list: []
     };
   },
   created: function created() {
@@ -2032,6 +2038,8 @@ __webpack_require__.r(__webpack_exports__);
     GetServiceInfo: function GetServiceInfo(e) {
       var _this2 = this;
 
+      e.preventDefault();
+      this.services_data_list = [];
       this.service_id = e.target.value;
       this.service_name = e.target.innerHTML;
       var payload = {
@@ -2039,31 +2047,50 @@ __webpack_require__.r(__webpack_exports__);
       };
       var url = "/api/passenger/get-services-info";
       this.axios.post(url, payload).then(function (response) {
-        _this2.services_data_list = response.data;
+        var _iterator = _createForOfIteratorHelper(response.data),
+            _step;
+
+        try {
+          for (_iterator.s(); !(_step = _iterator.n()).done;) {
+            var row = _step.value;
+
+            _this2.services_data_list.push({
+              service_data_title: row.title,
+              service_data_title_id: row.id,
+              service_data_title_value: ''
+            });
+          }
+        } catch (err) {
+          _iterator.e(err);
+        } finally {
+          _iterator.f();
+        }
       });
     },
     createPassenger: function createPassenger(e) {
       var _this3 = this;
 
+      e.preventDefault();
       var uri = '/api/passenger/store';
       var payload = {
         passenger: this.passenger,
-        service_id: this.service_id
+        service_id: this.service_id,
+        services_data_list: this.services_data_list
       };
       this.axios.post(uri, payload).then(function (response) {
-        /* this.$swal.fire({
-             title: 'Success',
-             text: "Service created successfully",
-             icon: 'success',
-             timer: 1000
-         })*/
+        _this3.$swal.fire({
+          title: 'Success',
+          text: "Service created successfully",
+          icon: 'success',
+          timer: 1000
+        });
+
         _this3.$router.push({
           name: 'passengers'
         });
       });
       return true;
       this.errors = [];
-      e.preventDefault();
     }
   }
 });
@@ -42576,343 +42603,340 @@ var render = function() {
                 ])
               : _vm._e(),
             _vm._v(" "),
-            _c(
-              "form",
-              {
-                on: {
-                  submit: function($event) {
-                    $event.preventDefault()
-                    return _vm.createPassenger($event)
-                  }
-                }
-              },
-              [
-                _c("div", { staticClass: "row" }, [
-                  _c("div", { staticClass: "col-md-12" }, [
-                    _c("div", { staticClass: "form-group" }, [
-                      _c("label", { attrs: { htmlFor: "name" } }, [
-                        _vm._v("Name")
-                      ]),
-                      _vm._v(" "),
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.passenger.name,
-                            expression: "passenger.name"
-                          }
-                        ],
-                        staticClass: "form-control",
-                        attrs: { type: "text", id: "name" },
-                        domProps: { value: _vm.passenger.name },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.$set(_vm.passenger, "name", $event.target.value)
-                          }
+            _c("form", [
+              _c("div", { staticClass: "row" }, [
+                _c("div", { staticClass: "col-md-12" }, [
+                  _c("div", { staticClass: "form-group" }, [
+                    _c("label", { attrs: { htmlFor: "name" } }, [
+                      _vm._v("Name")
+                    ]),
+                    _vm._v(" "),
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.passenger.name,
+                          expression: "passenger.name"
                         }
-                      })
-                    ])
-                  ])
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "row" }, [
-                  _c("div", { staticClass: "col-md-12" }, [
-                    _c("div", { staticClass: "form-group" }, [
-                      _c("label", { attrs: { htmlFor: "passport" } }, [
-                        _vm._v("Passport")
-                      ]),
-                      _vm._v(" "),
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.passenger.passport,
-                            expression: "passenger.passport"
-                          }
-                        ],
-                        staticClass: "form-control",
-                        attrs: { type: "text", id: "passport" },
-                        domProps: { value: _vm.passenger.passport },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.$set(
-                              _vm.passenger,
-                              "passport",
-                              $event.target.value
-                            )
-                          }
-                        }
-                      })
-                    ])
-                  ])
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "row" }, [
-                  _c("div", { staticClass: "col-md-12" }, [
-                    _c("div", { staticClass: "form-group" }, [
-                      _c("label", { attrs: { htmlFor: "email" } }, [
-                        _vm._v("Email")
-                      ]),
-                      _vm._v(" "),
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.passenger.email,
-                            expression: "passenger.email"
-                          }
-                        ],
-                        staticClass: "form-control",
-                        attrs: { type: "text", id: "email" },
-                        domProps: { value: _vm.passenger.email },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.$set(
-                              _vm.passenger,
-                              "email",
-                              $event.target.value
-                            )
-                          }
-                        }
-                      })
-                    ])
-                  ])
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "row" }, [
-                  _c("div", { staticClass: "col-md-12" }, [
-                    _c("div", { staticClass: "form-group" }, [
-                      _c("label", { attrs: { htmlFor: "mobile" } }, [
-                        _vm._v("Mobile")
-                      ]),
-                      _vm._v(" "),
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.passenger.mobile,
-                            expression: "passenger.mobile"
-                          }
-                        ],
-                        staticClass: "form-control",
-                        attrs: { type: "text", id: "mobile" },
-                        domProps: { value: _vm.passenger.mobile },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.$set(
-                              _vm.passenger,
-                              "mobile",
-                              $event.target.value
-                            )
-                          }
-                        }
-                      })
-                    ])
-                  ])
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "row" }, [
-                  _c("div", { staticClass: "col-md-12" }, [
-                    _c(
-                      "div",
-                      { staticClass: "form-group" },
-                      [
-                        _c("label", { attrs: { htmlFor: "services" } }, [
-                          _vm._v("Service")
-                        ]),
-                        _vm._v(" "),
-                        _c("br"),
-                        _vm._v(" "),
-                        _vm._l(_vm.services, function(service) {
-                          return _c(
-                            "div",
-                            {
-                              key: service.id,
-                              staticStyle: {
-                                display: "inline-block",
-                                "margin-right": "5px"
-                              }
-                            },
-                            [
-                              _c(
-                                "button",
-                                {
-                                  staticClass: "btn btn-dark",
-                                  attrs: { value: service.id },
-                                  on: {
-                                    click: function($event) {
-                                      return _vm.GetServiceInfo($event)
-                                    }
-                                  }
-                                },
-                                [_vm._v(_vm._s(service.name))]
-                              )
-                            ]
-                          )
-                        })
                       ],
-                      2
-                    )
+                      staticClass: "form-control",
+                      attrs: { type: "text", id: "name" },
+                      domProps: { value: _vm.passenger.name },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(_vm.passenger, "name", $event.target.value)
+                        }
+                      }
+                    })
                   ])
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "row" }, [
-                  _c("div", { staticClass: "col-md-12" }, [
-                    _vm.services_data_list
-                      ? _c(
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "row" }, [
+                _c("div", { staticClass: "col-md-12" }, [
+                  _c("div", { staticClass: "form-group" }, [
+                    _c("label", { attrs: { htmlFor: "passport" } }, [
+                      _vm._v("Passport")
+                    ]),
+                    _vm._v(" "),
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.passenger.passport,
+                          expression: "passenger.passport"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: { type: "text", id: "passport" },
+                      domProps: { value: _vm.passenger.passport },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(
+                            _vm.passenger,
+                            "passport",
+                            $event.target.value
+                          )
+                        }
+                      }
+                    })
+                  ])
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "row" }, [
+                _c("div", { staticClass: "col-md-12" }, [
+                  _c("div", { staticClass: "form-group" }, [
+                    _c("label", { attrs: { htmlFor: "email" } }, [
+                      _vm._v("Email")
+                    ]),
+                    _vm._v(" "),
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.passenger.email,
+                          expression: "passenger.email"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: { type: "text", id: "email" },
+                      domProps: { value: _vm.passenger.email },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(_vm.passenger, "email", $event.target.value)
+                        }
+                      }
+                    })
+                  ])
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "row" }, [
+                _c("div", { staticClass: "col-md-12" }, [
+                  _c("div", { staticClass: "form-group" }, [
+                    _c("label", { attrs: { htmlFor: "mobile" } }, [
+                      _vm._v("Mobile")
+                    ]),
+                    _vm._v(" "),
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.passenger.mobile,
+                          expression: "passenger.mobile"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: { type: "text", id: "mobile" },
+                      domProps: { value: _vm.passenger.mobile },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(_vm.passenger, "mobile", $event.target.value)
+                        }
+                      }
+                    })
+                  ])
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "row" }, [
+                _c("div", { staticClass: "col-md-12" }, [
+                  _c(
+                    "div",
+                    { staticClass: "form-group" },
+                    [
+                      _c("label", { attrs: { htmlFor: "services" } }, [
+                        _vm._v("Service")
+                      ]),
+                      _vm._v(" "),
+                      _c("br"),
+                      _vm._v(" "),
+                      _vm._l(_vm.services, function(service) {
+                        return _c(
                           "div",
                           {
+                            key: service.id,
                             staticStyle: {
-                              border: "1px solid rgb(146 144 144)",
-                              padding: "20px",
-                              "margin-bottom": "40px"
+                              display: "inline-block",
+                              "margin-right": "5px"
                             }
                           },
                           [
-                            _c("h5", [
-                              _vm._v(
-                                "Service Information for " +
-                                  _vm._s(_vm.service_name)
-                              )
-                            ]),
-                            _vm._v(" "),
-                            _c("hr"),
-                            _vm._v(" "),
-                            _vm._l(_vm.services_data_list, function(
-                              service_data,
-                              index
-                            ) {
-                              return _c(
-                                "div",
-                                { key: service_data.id, staticClass: "row" },
-                                [
-                                  _c("div", { staticClass: "col-md-12" }, [
-                                    _c("div", { staticClass: "form-group" }, [
-                                      _c(
-                                        "label",
-                                        { attrs: { htmlFor: "service_data" } },
-                                        [_vm._v(_vm._s(service_data.title))]
-                                      ),
-                                      _vm._v(" "),
-                                      _c("input", {
-                                        directives: [
-                                          {
-                                            name: "model",
-                                            rawName: "v-model",
-                                            value: service_data.id,
-                                            expression: "service_data.id"
-                                          }
-                                        ],
-                                        attrs: { type: "hidden" },
-                                        domProps: { value: service_data.id },
-                                        on: {
-                                          input: function($event) {
-                                            if ($event.target.composing) {
-                                              return
-                                            }
-                                            _vm.$set(
-                                              service_data,
-                                              "id",
-                                              $event.target.value
-                                            )
-                                          }
-                                        }
-                                      }),
-                                      _vm._v(" "),
-                                      _c("input", {
-                                        directives: [
-                                          {
-                                            name: "model",
-                                            rawName: "v-model",
-                                            value: service_data.value,
-                                            expression: "service_data.value"
-                                          }
-                                        ],
-                                        key: index,
-                                        staticClass: "form-control",
-                                        attrs: {
-                                          type: "text",
-                                          id: "service_data"
-                                        },
-                                        domProps: { value: service_data.value },
-                                        on: {
-                                          input: function($event) {
-                                            if ($event.target.composing) {
-                                              return
-                                            }
-                                            _vm.$set(
-                                              service_data,
-                                              "value",
-                                              $event.target.value
-                                            )
-                                          }
-                                        }
-                                      })
-                                    ])
-                                  ])
-                                ]
-                              )
-                            })
-                          ],
-                          2
+                            _c(
+                              "button",
+                              {
+                                staticClass: "btn btn-dark",
+                                attrs: { value: service.id },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.GetServiceInfo($event)
+                                  }
+                                }
+                              },
+                              [_vm._v(_vm._s(service.name))]
+                            )
+                          ]
                         )
-                      : _vm._e()
-                  ])
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "row" }, [
-                  _c(
-                    "div",
-                    { staticClass: "col-md-6" },
-                    [
-                      _c(
-                        "router-link",
-                        {
-                          staticClass: "btn btn-secondary",
-                          attrs: { to: { name: "passengers" } }
-                        },
-                        [_vm._v("Back")]
-                      )
+                      })
                     ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _vm._m(0)
+                    2
+                  )
                 ])
-              ]
-            )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "row" }, [
+                _c("div", { staticClass: "col-md-12" }, [
+                  _vm.services_data_list
+                    ? _c(
+                        "div",
+                        {
+                          staticStyle: {
+                            border: "1px solid rgb(146 144 144)",
+                            padding: "20px",
+                            "margin-bottom": "40px"
+                          }
+                        },
+                        [
+                          _c("h5", [
+                            _vm._v(
+                              "Service Information for " +
+                                _vm._s(_vm.service_name)
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("hr"),
+                          _vm._v(" "),
+                          _vm._l(_vm.services_data_list, function(
+                            service_data,
+                            index
+                          ) {
+                            return _c(
+                              "div",
+                              { key: service_data.id, staticClass: "row" },
+                              [
+                                _c("div", { staticClass: "col-md-12" }, [
+                                  _c("div", { staticClass: "form-group" }, [
+                                    _c(
+                                      "label",
+                                      { attrs: { htmlFor: "service_data" } },
+                                      [
+                                        _vm._v(
+                                          _vm._s(
+                                            service_data.service_data_title
+                                          )
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c("input", {
+                                      directives: [
+                                        {
+                                          name: "model",
+                                          rawName: "v-model",
+                                          value:
+                                            service_data.service_data_title_id,
+                                          expression:
+                                            "service_data.service_data_title_id"
+                                        }
+                                      ],
+                                      attrs: { type: "hidden" },
+                                      domProps: {
+                                        value:
+                                          service_data.service_data_title_id
+                                      },
+                                      on: {
+                                        input: function($event) {
+                                          if ($event.target.composing) {
+                                            return
+                                          }
+                                          _vm.$set(
+                                            service_data,
+                                            "service_data_title_id",
+                                            $event.target.value
+                                          )
+                                        }
+                                      }
+                                    }),
+                                    _vm._v(" "),
+                                    _c("input", {
+                                      directives: [
+                                        {
+                                          name: "model",
+                                          rawName: "v-model",
+                                          value:
+                                            service_data.service_data_title_value,
+                                          expression:
+                                            "service_data.service_data_title_value"
+                                        }
+                                      ],
+                                      key: index,
+                                      staticClass: "form-control",
+                                      attrs: {
+                                        type: "text",
+                                        id: "service_data"
+                                      },
+                                      domProps: {
+                                        value:
+                                          service_data.service_data_title_value
+                                      },
+                                      on: {
+                                        input: function($event) {
+                                          if ($event.target.composing) {
+                                            return
+                                          }
+                                          _vm.$set(
+                                            service_data,
+                                            "service_data_title_value",
+                                            $event.target.value
+                                          )
+                                        }
+                                      }
+                                    })
+                                  ])
+                                ])
+                              ]
+                            )
+                          })
+                        ],
+                        2
+                      )
+                    : _vm._e()
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "row" }, [
+                _c(
+                  "div",
+                  { staticClass: "col-md-6" },
+                  [
+                    _c(
+                      "router-link",
+                      {
+                        staticClass: "btn btn-secondary",
+                        attrs: { to: { name: "passengers" } }
+                      },
+                      [_vm._v("Back")]
+                    )
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _c("div", { staticClass: "col-md-6 text-right" }, [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-primary",
+                      on: { click: _vm.createPassenger }
+                    },
+                    [_vm._v("Submit")]
+                  )
+                ])
+              ])
+            ])
           ])
         ])
       ])
     ])
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-md-6 text-right" }, [
-      _c("button", { staticClass: "btn btn-primary" }, [_vm._v("Submit")])
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -59055,8 +59079,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! G:\xampp\htdocs\crud_laravel_vue_js\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! G:\xampp\htdocs\crud_laravel_vue_js\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! G:\xampp\htdocs\Laravel\Vue Js\crud_laravel_vue_js\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! G:\xampp\htdocs\Laravel\Vue Js\crud_laravel_vue_js\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
